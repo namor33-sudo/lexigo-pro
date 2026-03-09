@@ -3,13 +3,188 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lexigo Pro</title>
+  <title>Lexigo Pro - Join Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(180deg, #1a0f3d, #3b1f73, #5b2ea6);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .phone-screen {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 28px 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.9rem;
+      background: #8b5cf6;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 28px;
+      color: #d8ccff;
+      font-size: 1rem;
+    }
+
+    .label {
+      margin-bottom: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      margin-bottom: 24px;
+      background: rgba(255,255,255,0.95);
+      color: #111827;
+    }
+
+    .avatars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .avatar {
+      background: rgba(255,255,255,0.14);
+      border: 2px solid transparent;
+      border-radius: 18px;
+      padding: 14px 10px;
+      text-align: center;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .avatar:hover {
+      transform: translateY(-2px);
+      border-color: #a78bfa;
+      background: rgba(255,255,255,0.2);
+    }
+
+    .avatar.selected {
+      border-color: #22c55e;
+      background: rgba(34,197,94,0.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 18px;
+      background: linear-gradient(90deg, #84cc16, #22c55e);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(34,197,94,0.35);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 16px;
+      color: #d8ccff;
+      font-size: 0.95rem;
+      min-height: 24px;
+    }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; background:#111827; color:white; display:flex; align-items:center; justify-content:center; height:100vh; margin:0;">
-  <div style="text-align:center;">
-    <h1>Lexigo Pro</h1>
-    <p>The project is now live.</p>
-    <p>Next step: build the first playable version.</p>
+<body>
+  <div class="phone-screen">
+    <div class="logo">Lexigo <span class="badge">PRO</span></div>
+    <div class="subtitle">Join the game and get ready to play</div>
+
+    <div class="label">Enter nickname</div>
+    <input type="text" id="nickname" placeholder="Type your nickname" />
+
+    <div class="label">Choose avatar</div>
+    <div class="avatars">
+      <div class="avatar" data-avatar="avatar_1">😀</div>
+      <div class="avatar" data-avatar="avatar_2">😎</div>
+      <div class="avatar" data-avatar="avatar_3">🤖</div>
+      <div class="avatar" data-avatar="avatar_4">🦊</div>
+      <div class="avatar" data-avatar="avatar_5">🐼</div>
+      <div class="avatar" data-avatar="avatar_6">🐯</div>
+      <div class="avatar" data-avatar="avatar_7">👽</div>
+      <div class="avatar" data-avatar="avatar_8">🐸</div>
+    </div>
+
+    <button id="joinBtn">Join Game</button>
+    <div class="status" id="statusMessage"></div>
   </div>
+
+  <script>
+    let selectedAvatar = "";
+
+    const avatars = document.querySelectorAll(".avatar");
+    const joinBtn = document.getElementById("joinBtn");
+    const nicknameInput = document.getElementById("nickname");
+    const statusMessage = document.getElementById("statusMessage");
+
+    avatars.forEach((avatar) => {
+      avatar.addEventListener("click", () => {
+        avatars.forEach((a) => a.classList.remove("selected"));
+        avatar.classList.add("selected");
+        selectedAvatar = avatar.dataset.avatar;
+      });
+    });
+
+    joinBtn.addEventListener("click", () => {
+      const nickname = nicknameInput.value.trim();
+
+      if (!nickname) {
+        statusMessage.textContent = "Please enter a nickname.";
+        return;
+      }
+
+      if (!selectedAvatar) {
+        statusMessage.textContent = "Please choose an avatar.";
+        return;
+      }
+
+      statusMessage.textContent = `Welcome ${nickname}! You selected ${selectedAvatar}.`;
+    });
+  </script>
 </body>
 </html>
