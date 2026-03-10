@@ -208,7 +208,8 @@
           streak: 0
         });
 
-        statusMessage.textContent = "Joined the game successfully!";
+        showWaitingRoom(nickname, selectedAvatar);
+        listenForPlayers();
       } catch (error) {
         statusMessage.textContent = "Error joining game.";
         console.error(error);
