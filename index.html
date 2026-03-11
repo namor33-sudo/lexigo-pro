@@ -163,6 +163,7 @@
 }
 
 async function showQuestionScreen() {
+
   const sessionRef = ref(db, "sessions/game_001");
   const sessionSnapshot = await get(sessionRef);
   const sessionData = sessionSnapshot.val();
@@ -189,27 +190,44 @@ async function showQuestionScreen() {
     <div class="logo">Lexigo <span class="badge">PRO</span></div>
     <div class="subtitle">Question ${currentQuestionNumber}</div>
 
-    <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; line-height: 1.4;">
+    <div style="font-size:1.3rem;font-weight:bold;margin-bottom:20px;">
       ${questionData.question}
     </div>
 
-    <div class="answers">
-      <button class="answer-btn" data-option="a" style="margin-bottom:12px;">A. ${questionData.options.a}</button>
-      <button class="answer-btn" data-option="b" style="margin-bottom:12px;">B. ${questionData.options.b}</button>
-      <button class="answer-btn" data-option="c" style="margin-bottom:12px;">C. ${questionData.options.c}</button>
-      <button class="answer-btn" data-option="d">D. ${questionData.options.d}</button>
-    </div>
+    <button class="answer-btn" data-option="a">
+      A. ${questionData.options.a}
+    </button>
+
+    <button class="answer-btn" data-option="b">
+      B. ${questionData.options.b}
+    </button>
+
+    <button class="answer-btn" data-option="c">
+      C. ${questionData.options.c}
+    </button>
+
+    <button class="answer-btn" data-option="d">
+      D. ${questionData.options.d}
+    </button>
 
     <div class="status" id="statusMessage"></div>
   `;
 
   const buttons = document.querySelectorAll(".answer-btn");
+
   buttons.forEach((button) => {
+
     button.addEventListener("click", () => {
+
       const statusMessage = document.getElementById("statusMessage");
-      statusMessage.textContent = `You selected option ${button.dataset.option.toUpperCase()}.`;
+
+      statusMessage.textContent =
+        "You selected option " + button.dataset.option.toUpperCase();
+
     });
+
   });
+
 }
     avatars.forEach((avatar) => {
       avatar.addEventListener("click", () => {
