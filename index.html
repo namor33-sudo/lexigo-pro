@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lexigo Pro - Join Game</title>
+  <title>Lexigo Pro</title>
   <style>
     * {
       box-sizing: border-box;
@@ -26,10 +26,10 @@
       width: 100%;
       max-width: 420px;
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 24px;
       padding: 28px 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(10px);
     }
 
@@ -71,7 +71,7 @@
       outline: none;
       font-size: 1rem;
       margin-bottom: 24px;
-      background: rgba(255,255,255,0.95);
+      background: rgba(255, 255, 255, 0.95);
       color: #111827;
     }
 
@@ -83,7 +83,7 @@
     }
 
     .avatar {
-      background: rgba(255,255,255,0.14);
+      background: rgba(255, 255, 255, 0.14);
       border: 2px solid transparent;
       border-radius: 18px;
       padding: 14px 10px;
@@ -96,12 +96,12 @@
     .avatar:hover {
       transform: translateY(-2px);
       border-color: #a78bfa;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .avatar.selected {
       border-color: #22c55e;
-      background: rgba(34,197,94,0.2);
+      background: rgba(34, 197, 94, 0.2);
     }
 
     button {
@@ -114,7 +114,12 @@
       font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
-      box-shadow: 0 10px 25px rgba(34,197,94,0.35);
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.35);
+    }
+
+    .answer-btn {
+      margin-bottom: 12px;
+      text-align: left;
     }
 
     .status {
@@ -123,6 +128,12 @@
       color: #d8ccff;
       font-size: 0.95rem;
       min-height: 24px;
+    }
+
+    .player-row {
+      padding: 10px;
+      font-size: 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
   </style>
 </head>
@@ -150,85 +161,30 @@
     <div class="status" id="statusMessage"></div>
   </div>
 
-  function listenForGameStatus() {
-  const statusRef = ref(db, "sessions/game_001/status");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, push, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  onValue(statusRef, async (snapshot) => {
-    const status = snapshot.val();
+    const firebaseConfig = {
+      apiKey: "AIzaSyBQtwgEwIH9kTrSXUWWQfrHUQTLhXbJNj8",
+      authDomain: "lexigo-pro-24940.firebaseapp.com",
+      databaseURL: "https://lexigo-pro-24940-default-rtdb.firebaseio.com",
+      projectId: "lexigo-pro-24940",
+      storageBucket: "lexigo-pro-24940.firebasestorage.app",
+      messagingSenderId: "924447332873",
+      appId: "1:924447332873:web:9cd30847ec809c5bb036d8"
+    };
 
-    if (status === "playing") {
-      await showQuestionScreen();
-    }
-  });
-}
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-async function showQuestionScreen() {
+    let selectedAvatar = "";
 
-  const sessionRef = ref(db, "sessions/game_001");
-  const sessionSnapshot = await get(sessionRef);
-  const sessionData = sessionSnapshot.val();
+    const avatars = document.querySelectorAll(".avatar");
+    const joinBtn = document.getElementById("joinBtn");
+    const nicknameInput = document.getElementById("nickname");
+    const statusMessage = document.getElementById("statusMessage");
 
-  if (!sessionData) return;
-
-  const quizId = sessionData.quizId;
-  const currentQuestionNumber = sessionData.currentQuestion;
-
-  const quizRef = ref(db, `quizzes/${quizId}`);
-  const quizSnapshot = await get(quizRef);
-  const quizData = quizSnapshot.val();
-
-  if (!quizData || !quizData.questions) return;
-
-  const questionKey = `q${currentQuestionNumber}`;
-  const questionData = quizData.questions[questionKey];
-
-  if (!questionData) return;
-
-  const container = document.querySelector(".phone-screen");
-
-  container.innerHTML = `
-    <div class="logo">Lexigo <span class="badge">PRO</span></div>
-    <div class="subtitle">Question ${currentQuestionNumber}</div>
-
-    <div style="font-size:1.3rem;font-weight:bold;margin-bottom:20px;">
-      ${questionData.question}
-    </div>
-
-    <button class="answer-btn" data-option="a">
-      A. ${questionData.options.a}
-    </button>
-
-    <button class="answer-btn" data-option="b">
-      B. ${questionData.options.b}
-    </button>
-
-    <button class="answer-btn" data-option="c">
-      C. ${questionData.options.c}
-    </button>
-
-    <button class="answer-btn" data-option="d">
-      D. ${questionData.options.d}
-    </button>
-
-    <div class="status" id="statusMessage"></div>
-  `;
-
-  const buttons = document.querySelectorAll(".answer-btn");
-
-  buttons.forEach((button) => {
-
-    button.addEventListener("click", () => {
-
-      const statusMessage = document.getElementById("statusMessage");
-
-      statusMessage.textContent =
-        "You selected option " + button.dataset.option.toUpperCase();
-
-    });
-
-  });
-
-}
     avatars.forEach((avatar) => {
       avatar.addEventListener("click", () => {
         avatars.forEach((a) => a.classList.remove("selected"));
@@ -263,50 +219,110 @@ async function showQuestionScreen() {
           streak: 0
         });
 
-        showWaitingRoom(nickname, selectedAvatar);
+        showWaitingRoom();
         listenForPlayers();
       } catch (error) {
         statusMessage.textContent = "Error joining game.";
         console.error(error);
       }
     });
-    function showWaitingRoom(nickname, avatar) {
-  const container = document.querySelector(".phone-screen");
 
-  container.innerHTML = `
-    <div class="logo">Lexigo <span class="badge">PRO</span></div>
-    <div class="subtitle">Waiting for host...</div>
-    <div id="playerList"></div>
-  `;
-}
+    function showWaitingRoom() {
+      const container = document.querySelector(".phone-screen");
 
-function listenForPlayers() {
-  const playersRef = ref(db, "sessions/game_001/players");
+      container.innerHTML = `
+        <div class="logo">Lexigo <span class="badge">PRO</span></div>
+        <div class="subtitle">Waiting for host...</div>
+        <div id="playerList"></div>
+      `;
+    }
 
-  onValue(playersRef, (snapshot) => {
-    const players = snapshot.val();
-    const list = document.getElementById("playerList");
+    function listenForPlayers() {
+      const playersRef = ref(db, "sessions/game_001/players");
 
-    if (!list) return;
+      onValue(playersRef, (snapshot) => {
+        const players = snapshot.val();
+        const list = document.getElementById("playerList");
 
-    list.innerHTML = "";
+        if (!list) return;
 
-    if (!players) return;
+        list.innerHTML = "";
 
-    Object.values(players).forEach(player => {
-      if (!player || !player.nickname) return;
+        if (!players) return;
 
-      const div = document.createElement("div");
-      div.style.padding = "10px";
-      div.style.fontSize = "18px";
-      div.style.borderBottom = "1px solid rgba(255,255,255,0.08)";
-      div.innerHTML = `${player.avatar} ${player.nickname}`;
-      list.appendChild(div);
-    });
-  });
+        Object.values(players).forEach((player) => {
+          if (!player || !player.nickname) return;
 
-  listenForGameStatus();
-}
+          const div = document.createElement("div");
+          div.className = "player-row";
+          div.textContent = `${player.avatar} ${player.nickname}`;
+          list.appendChild(div);
+        });
+      });
+
+      listenForGameStatus();
+    }
+
+    function listenForGameStatus() {
+      const statusRef = ref(db, "sessions/game_001/status");
+
+      onValue(statusRef, async (snapshot) => {
+        const status = snapshot.val();
+
+        if (status === "playing") {
+          await showQuestionScreen();
+        }
+      });
+    }
+
+    async function showQuestionScreen() {
+      const sessionRef = ref(db, "sessions/game_001");
+      const sessionSnapshot = await get(sessionRef);
+      const sessionData = sessionSnapshot.val();
+
+      if (!sessionData) return;
+
+      const quizId = sessionData.quizId;
+      const currentQuestionNumber = sessionData.currentQuestion;
+
+      const quizRef = ref(db, `quizzes/${quizId}`);
+      const quizSnapshot = await get(quizRef);
+      const quizData = quizSnapshot.val();
+
+      if (!quizData || !quizData.questions) return;
+
+      const questionKey = `q${currentQuestionNumber}`;
+      const questionData = quizData.questions[questionKey];
+
+      if (!questionData) return;
+
+      const container = document.querySelector(".phone-screen");
+
+      container.innerHTML = `
+        <div class="logo">Lexigo <span class="badge">PRO</span></div>
+        <div class="subtitle">Question ${currentQuestionNumber}</div>
+
+        <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; line-height: 1.4;">
+          ${questionData.question}
+        </div>
+
+        <button class="answer-btn" data-option="a">A. ${questionData.options.a}</button>
+        <button class="answer-btn" data-option="b">B. ${questionData.options.b}</button>
+        <button class="answer-btn" data-option="c">C. ${questionData.options.c}</button>
+        <button class="answer-btn" data-option="d">D. ${questionData.options.d}</button>
+
+        <div class="status" id="statusMessage"></div>
+      `;
+
+      const buttons = document.querySelectorAll(".answer-btn");
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const msg = document.getElementById("statusMessage");
+          msg.textContent = "You selected option " + button.dataset.option.toUpperCase();
+        });
+      });
+    }
   </script>
 </body>
 </html>
