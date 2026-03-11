@@ -215,6 +215,41 @@
         console.error(error);
       }
     });
+    function showWaitingRoom(nickname, avatar) {
+  const container = document.querySelector(".phone-screen");
+
+  container.innerHTML = `
+    <div class="logo">Lexigo <span class="badge">PRO</span></div>
+    <div class="subtitle">Waiting for host...</div>
+    <div id="playerList"></div>
+  `;
+}
+
+function listenForPlayers() {
+  import("https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js")
+    .then(({ ref, onValue }) => {
+      const playersRef = ref(db, "sessions/game_001/players");
+
+      onValue(playersRef, (snapshot) => {
+        const players = snapshot.val();
+        const list = document.getElementById("playerList");
+
+        list.innerHTML = "";
+
+        if (!players) return;
+
+        Object.values(players).forEach(player => {
+          if (!player || !player.nickname) return;
+
+          const div = document.createElement("div");
+          div.style.padding = "10px";
+          div.style.fontSize = "18px";
+          div.innerHTML = `${player.avatar} ${player.nickname}`;
+          list.appendChild(div);
+        });
+      });
+    });
+}
   </script>
 </body>
 </html>
